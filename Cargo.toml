@@ -29,12 +29,15 @@ rand = "0.8.5"
 getrandom = { version = "0.2.10", features = ["js"] }
 futures = "0.3.28"
 wasm-bindgen-futures = "0.4.37"
+serde = { version = "1.0.188", features = ["derive"] }
+gloo-utils = { version = "0.2.0", features = ["serde"] }
+
 
 # The `web-sys` crate allows you to interact with the various browser APIs,
 # like the DOM.
 [dependencies.web-sys]
 version = "0.3.64"
-features = ["console", "Window", "Document", "HtmlCanvasElement", "CanvasRenderingContext2d", "Element", "HtmlImageElement"]
+features = ["console", "Window", "Document", "HtmlCanvasElement", "CanvasRenderingContext2d", "Element", "HtmlImageElement", "Response"]
 
 # These crates are used for running unit tests.
 [dev-dependencies]
