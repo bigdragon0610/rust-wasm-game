@@ -1,8 +1,8 @@
 #[macro_use]
 mod browser;
+mod engine;
 
-use std::sync::Mutex;
-use std::{collections::HashMap, rc::Rc};
+use std::collections::HashMap;
 
 use gloo_utils::format::JsValueSerdeExt;
 use serde::Deserialize;
@@ -39,27 +39,10 @@ pub fn main_js() -> Result<(), JsValue> {
             .into_serde()
             .expect("Could not convert rhb.json into a Sheet structure");
 
-        let (success_tx, success_rx) = futures::channel::oneshot::channel::<Result<(), JsValue>>();
-        let success_tx = Rc::new(Mutex::new(Some(success_tx)));
-        let error_tx = Rc::clone(&success_tx);
-        let image = web_sys::HtmlImageElement::new().unwrap();
+        let image = engine::load_image("rhb.png")
+            .await
+            .expect("Could not load rhb.png");
 
-        let callback = Closure::once(move || {
-            if let Some(success_tx) = success_tx.lock().ok().and_then(|mut opt| opt.take()) {
-                success_tx.send(Ok(()));
-            }
-        });
-        let error_callback = Closure::once(move |err| {
-            if let Some(error_tx) = error_tx.lock().ok().and_then(|mut opt| opt.take()) {
-                error_tx.send(Err(err));
-            }
-        });
-
-        image.set_onload(Some(callback.as_ref().unchecked_ref()));
-        image.set_onerror(Some(error_callback.as_ref().unchecked_ref()));
-        image.set_src("rhb.png");
-
-        success_rx.await;
         let mut frame = -1;
         let interval_callback = Closure::wrap(Box::new(move || {
             frame = (frame + 1) % 8;
