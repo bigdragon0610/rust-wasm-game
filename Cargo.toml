@@ -32,13 +32,14 @@ wasm-bindgen-futures = "0.4.37"
 serde = { version = "1.0.188", features = ["derive"] }
 gloo-utils = { version = "0.2.0", features = ["serde"] }
 anyhow = "1.0.75"
+async-trait = "0.1.74"
 
 
 # The `web-sys` crate allows you to interact with the various browser APIs,
 # like the DOM.
 [dependencies.web-sys]
 version = "0.3.64"
-features = ["console", "Window", "Document", "HtmlCanvasElement", "CanvasRenderingContext2d", "Element", "HtmlImageElement", "Response"]
+features = ["console", "Window", "Document", "HtmlCanvasElement", "CanvasRenderingContext2d", "Element", "HtmlImageElement", "Response", "Performance"]
 
 # These crates are used for running unit tests.
 [dev-dependencies]

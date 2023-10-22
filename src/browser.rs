@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Ok, Result};
 use futures::Future;
 use wasm_bindgen::{
     closure::{Closure, WasmClosure, WasmClosureFnOnce},
@@ -86,7 +86,7 @@ where
 
 pub type LoopClosure = Closure<dyn FnMut(f64)>;
 
-pub fn request_animation_frame(callback: LoopClosure) -> Result<i32> {
+pub fn request_animation_frame(callback: &LoopClosure) -> Result<i32> {
     window()?
         .request_animation_frame(callback.as_ref().unchecked_ref())
         .map_err(|err| anyhow!("Cannot request animation frame {:#?}", err))
@@ -98,4 +98,11 @@ pub fn create_raf_closure(f: impl FnMut(f64) + 'static) -> LoopClosure {
 
 pub fn closure_wrap<T: WasmClosure + ?Sized>(data: Box<T>) -> Closure<T> {
     Closure::wrap(data)
+}
+
+pub fn now() -> Result<f64> {
+    Ok(window()?
+        .performance()
+        .ok_or_else(|| anyhow!("Performance object not found"))?
+        .now())
 }
